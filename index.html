@@ -1,1 +1,696 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة تدريب Power BI - التصميم المعماري</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #F2C811; /* Power BI Yellow */
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --success: #10b981;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.8;
+            padding-bottom: 50px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--bg-dark);
+            z-index: 1000;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            position: fixed;
+            top: 10px;
+            left: 20px;
+            background: rgba(30, 41, 59, 0.9);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: bold;
+            z-index: 1000;
+            border: 1px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Container & Timeline */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-right: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 15px;
+            height: 100%;
+            width: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        /* Journey Station (Card) */
+        .station {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .station:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .station::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -32px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 4px solid var(--bg-dark);
+        }
+
+        .station h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .station h3 {
+            color: #fff;
+            margin: 25px 0 10px;
+            font-size: 1.3rem;
+        }
+        .station p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+        .station ul {
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        .station li {
+            margin-bottom: 8px;
+        }
+
+        /* Interactive Checklist */
+        .checklist-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-right: 4px solid var(--success);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .checklist-container h4 {
+            color: var(--success);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .check-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .check-item input[type="checkbox"] {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            margin-left: 15px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-dark);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .check-item input[type="checkbox"]:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        .check-item input[type="checkbox"]:checked::after {
+            content: '✔';
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            top: -2px;
+            left: 4px;
+        }
+        .check-item span {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            transition: color 0.2s;
+        }
+        .check-item input[type="checkbox"]:checked + span {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+        }
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: rgba(242, 200, 17, 0.1);
+            color: var(--primary);
+            font-weight: bold;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .station { padding: 20px; }
+            .timeline { padding-right: 25px; }
+            .timeline::before { right: 5px; }
+            .station::before { right: -25px; width: 14px; height: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">الإنجاز: 0%</div>
+
+    <div class="hero">
+        <h1>برنامج تدريب Power BI Desktop لسوق العمل</h1>
+        <p>تقرير شامل: التصميم المعماري والمنهجي (الرحلة التفاعلية والتحقق من المهارات)</p>
+    </div>
+
+    <div class="container">
+        <div class="timeline">
+
+            <div class="station">
+                <h2>المرحلة الأولى: البحث وتحليل السوق والتقييم المعياري</h2>
+                <p>تكشف التحليلات المعمقة والمقارنات الشاملة للبرامج التدريبية العالمية في مجال ذكاء الأعمال (Business Intelligence) عن تباين جذري في جودة المخرجات ومدى مواءمتها لمتطلبات سوق العمل المعاصر. تم إجراء تقييم دقيق لأبرز الدورات التدريبية المقدمة عبر منصات تعليمية رائدة مثل Coursera، وUdemy، وLinkedIn Learning، وDataCamp، بالإضافة إلى مسارات التعلم الرسمية المقدمة من Microsoft واختبارات شهادة PL-300.</p>
+                <p>تشير البيانات إلى أن الدورات التدريبية ذات القيمة العالية (High-Value Courses) تشترك في هيكلية مفاهيمية تركز على الفهم العميق لمحرك البيانات بدلاً من الحفظ التلقائي للخطوات. تشمل هذه الوحدات النمطية المشتركة: منهجيات استخراج البيانات وتحويلها عبر Power Query، هندسة ونمذجة البيانات (Data Modeling)، لغة تعبيرات تحليل البيانات (DAX)، وتصميم لوحات القيادة التفاعلية. في المقابل، تعاني المناهج التقليدية والقصيرة من نقاط ضعف جوهرية تعيق قدرة المتدربين على التحول إلى محللي بيانات يمتلكون الجاهزية الفورية لسوق العمل.</p>
+                <h3>تتمثل أبرز نقاط الضعف المستخلصة من تحليل المناهج الضعيفة في الآتي:</h3>
+                <ul>
+                    <li><strong>تجاهل هندسة النمذجة وتكديس البيانات:</strong> يتجه العديد من المتدربين والمدربين في الدورات الأساسية إلى استخدام "جدول البيانات الضخم الواحد" (One Big Table) كبديل أسهل من بناء "نموذج النجمة" (Star Schema). هذا النهج يؤدي إلى تضخم هائل في حجم البيانات، استهلاك غير مبرر للذاكرة، وضعف شديد في أداء محرك VertiPaq الذي يعتمد على التخزين العمودي وضغط البيانات.</li>
+                    <li><strong>القفز السريع إلى المؤشرات البصرية على حساب التحضير:</strong> يُعد إهمال مرحلة تحضير البيانات في Power Query لصالح بناء المؤشرات البصرية خطأً استراتيجياً فادحاً. البيانات غير المهيأة والمحورية (Pivoted Data) تجعل كتابة لغة DAX لاحقاً أمراً معقداً للغاية، وتمنع استخدام دوال ذكاء الوقت (Time Intelligence) بشكل فعال.</li>
+                    <li><strong>الاستخدام المفرط والخاطئ للأعمدة المحسوبة:</strong> تعتمد المناهج المبتدئة على تدريس الأعمدة المحسوبة (Calculated Columns) لحل جميع المشكلات بدلاً من المقاييس (Measures). هذا يكسر خوارزميات ضغط البيانات، حيث تتم معالجة الأعمدة المحسوبة بشكل تسلسلي (Sequential) مما يبطئ عمليات تحديث النموذج بشكل كبير، ويستهلك مساحة تخزينية دائمة.</li>
+                    <li><strong>العلاقات ثنائية الاتجاه (Bi-directional Relationships):</strong> يتم تدريسها كحل سريع لمشاكل التصفية المتقاطعة، ولكنها تؤدي في الواقع إلى إبطاء الاستعلامات، خلق مسارات تصفية غامضة (Ambiguity)، واختفاء البيانات بشكل غير متوقع (Vanishing Data)، فضلاً عن كسر قواعد الأمان على مستوى الصف (RLS).</li>
+                    <li><strong>غياب التطبيق على بيانات ضخمة وواقعية:</strong> الاكتفاء ببيانات مثالية تتكون من مئات الصفوف لا يعكس التحديات الحقيقية. المحلل في بيئة العمل يواجه بيانات غير منظمة تتطلب تطبيق مفاهيم معقدة مثل "طي الاستعلام" (Query Folding) لتحسين الأداء.</li>
+                </ul>
+                <p>بناءً على هذا التحليل، يمكن تعريف "المنهج التدريبي عالي القيمة" بأنه المنهج الذي يركز على تحسين الأداء (Performance Optimization)، السرد القصصي للبيانات (Data Storytelling)، الفهم المعماري لسياق التقييم (Row and Filter Context)، وتطبيق استراتيجيات معالجة البيانات الضخمة.</p>
+                
+                <div class="checklist-container">
+                    <h4>🎯 قائمة التحقق للمدرب (المرحلة 1)</h4>
+                    <label class="check-item"><input type="checkbox" id="chk1_1"><span>شرح الفرق بين التدريب المعماري العميق والمناهج التقليدية المعتمدة على حفظ الخطوات.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk1_2"><span>التحذير بوضوح من استخدام (One Big Table) وشرح أهمية (Star Schema).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk1_3"><span>توضيح خطورة القفز للمؤشرات البصرية قبل إنهاء التحضير في Power Query.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk1_4"><span>توضيح الفرق الجوهري بين المقاييس (Measures) والأعمدة المحسوبة، وخطر الثانية على الذاكرة.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk1_5"><span>التحذير من استخدام العلاقات ثنائية الاتجاه كحل سريع.</span></label>
+                </div>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة الثانية: هيكلية الدورة التدريبية وفلسفة التعلم</h2>
+                <p>يستند التصميم المعماري لهذا المنهج إلى فلسفة "التدريب المعرفي الموجه" (Cognitive Apprenticeship)، حيث لا ينصب التركيز على تدريس الأداة البرمجية كواجهة مستخدم فحسب، بل على هندسة التفكير المنطقي كمحلل بيانات محترف. تمتد الهيكلية على مدار 20 ساعة تدريبية مكثفة، مقسمة بدقة إلى 10 جلسات (ساعتان لكل جلسة).</p>
+                <p>يعتمد التدفق التعليمي (Learning Flow) على دورة حياة البيانات الحقيقية المتبعة في المؤسسات الكبرى، بدءاً من استخراج البيانات الخام وحتى اتخاذ القرارات التنفيذية. يعتمد المنهج على تطبيق "قاعدة روش" (Roche's Maxim) كفلسفة أساسية، والتي تنص على أن تحويل البيانات يجب أن يتم في أبعد نقطة ممكنة نحو المصدر (Upstream)، مما يقلل العبء على محرك العرض في Power BI.</p>
+                <h3>تم تقسيم التدفق إلى ست مراحل متتالية:</h3>
+                <ul>
+                    <li>اكتشاف المشكلة واستخراج البيانات (الجلسة 1): فهم بيئة العمل والاتصال بالمصادر.</li>
+                    <li>التنظيف والتحويل المتقدم (الجلسة 2): تطبيق استراتيجيات Power Query وهندسة البيانات.</li>
+                    <li>هندسة النمذجة (الجلسة 3 و 4): بناء النماذج العلائقية وتوجيه الفلاتر.</li>
+                    <li>الحسابات والتحليل المنطقي العميق (الجلسة 5، 6، و 7): إتقان لغة DAX وفهم سياق التقييم.</li>
+                    <li>السرد القصصي والتصميم البصري (الجلسة 8 و 9): دمج المؤشرات المخصصة وتحسين الأداء.</li>
+                    <li>النشر، الأمان، والجاهزية للسوق (الجلسة 10): إدارة مساحات العمل وبناء ملف الأعمال والمقابلات.</li>
+                </ul>
+                
+                <div class="checklist-container">
+                    <h4>🎯 قائمة التحقق للمدرب (المرحلة 2)</h4>
+                    <label class="check-item"><input type="checkbox" id="chk2_1"><span>شرح "قاعدة روش" (Roche's Maxim) للمتدربين بأهمية دفع التحويلات للمصدر.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk2_2"><span>استعراض الهيكلية العامة (الـ 6 مراحل) لتهيئة أذهان المتدربين لرحلة الدورة.</span></label>
+                </div>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة الرابعة: المشروع المتكامل (Integrated Project)</h2>
+                <p>لتجنب التشتت المعرفي الناتج عن استخدام بيانات مختلفة ومجزأة في كل جلسة، يعتمد هذا المنهج على مشروع واحد متكامل وضخم يتطور تدريجياً عبر الجلسات العشر. هذا النهج يحاكي المشاريع الواقعية للمؤسسات ويخلق رابطاً ذهنياً متصلاً لدى المتدربين.</p>
+                <p><strong>نطاق المشروع وموضوعه:</strong> تحليل أداء المبيعات، الربحية، وكفاءة العمليات لشركة تجارة إلكترونية عالمية (E-Commerce & Retail Operations). تم اختيار هذا القطاع لأنه يدمج بين التحليل المالي، تحليل سلوك العملاء، وتحليل سلاسل الإمداد.</p>
+                <p><strong>البيانات المستخدمة:</strong> مجموعة بيانات ضخمة (تتجاوز مليون صف) تحاكي بيانات "Online Retail" مع تعمد إدخال عيوب هيكلية فيها. تتكون من خمسة ملفات خام: جدول الحركات المالية (Transactions)، جدول العملاء (Customers)، جدول المنتجات (Products)، جدول المرتجعات (Returns)، وملف أهداف المبيعات السنوية (Targets) الذي يأتي بتنسيق محوري (Pivoted).</p>
+                <p><strong>التحديات المدمجة عمداً:</strong> وجود تواريخ بتنسيقات إقليمية مختلفة، بيانات غير متطابقة في أسماء المدن، غياب جدول تقويم (Calendar Table)، ووجود بيانات أهداف مالية مجدولة بأعمدة تمثل الأشهر، مما يستدعي تدخلاً جراحياً في Power Query.</p>
+                <p><strong>الهدف النهائي للمشروع:</strong> بناء "لوحة قيادة الملخص التنفيذي" (Executive Summary Dashboard) تتضمن تحليلاً لانحراف الإيرادات عن الموازنة، هوامش الربحية، وتصنيف العملاء بحسب القيمة، مع تطبيق معايير الاتصال التجاري الدولي (IBCS) لضمان اتخاذ قرارات سريعة ودقيقة.</p>
+                
+                <div class="checklist-container">
+                    <h4>🎯 قائمة التحقق للمدرب (المشروع المتكامل)</h4>
+                    <label class="check-item"><input type="checkbox" id="chk4_1"><span>تقديم فكرة المشروع (E-Commerce) وأسباب اختياره.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk4_2"><span>توزيع الملفات الخمسة الخام على المتدربين وشرح العيوب المتعمدة فيها.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk4_3"><span>توضيح الهدف النهائي للمشروع (Executive Summary Dashboard ومعايير IBCS).</span></label>
+                </div>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة الثالثة: الخطة التفصيلية للجلسات التدريبية</h2>
+                <p>تُعد هذه المرحلة العصب الرئيسي للمنهج التدريبي. تم تصميم كل جلسة لتبني على ما سبقها، مع تفصيل الأهداف، المحتوى، التطبيقات، وأدوار المدرب بدقة متناهية.</p>
+
+                <h3 style="color: var(--primary); margin-top: 30px;">الجلسة 1: إرساء القواعد، المعمارية الشاملة، والاتصال بالبيانات</h3>
+                <p><strong>أهداف التعلم:</strong> فهم معمارية Power BI ومكوناتها (Desktop, Service, Mobile, Gateway)، التمييز بين أنواع التراخيص وتأثيرها، إتقان طرق استيراد البيانات، والتمييز التقني بين وضع الاستيراد (Import) والاستعلام المباشر (DirectQuery).</p>
+                <p><strong>محتوى الجلسة:</strong> تبدأ الجلسة بتوضيح الفروقات الجوهرية بين أدوات التقارير التقليدية المعتمدة على الخوادم مثل SSRS وبين منصات الخدمة السحابية الحديثة مثل Power BI. يتم الانتقال بعد ذلك لشرح بنية المحرك الداخلي (VertiPaq) وكيفية ضغطه للبيانات في الذاكرة الحية (RAM). يتم مناقشة حالات الاستخدام لـ DirectQuery مقابل Live Connection.</p>
+                <p><strong>أمثلة دقيقة:</strong> استيراد ثلاثة ملفات CSV ضخمة تمثل مبيعات قارات مختلفة (أمريكا الشمالية، أوروبا، آسيا)، والاتصال بقاعدة بيانات SQL محاكية لجلب جدول المنتجات.</p>
+                <p><strong>أفكار العرض الحي:</strong> يقوم المدرب بربط التقرير بقاعدة بيانات تحتوي على 10 ملايين صف باستخدام وضع الاستعلام المباشر (DirectQuery) ثم يعيد العملية بوضع الاستيراد (Import). يلاحظ المتدربون الفرق الشاسع في سرعة تصفية البيانات وانعكاسها على المؤشرات البصرية لبيان قوة محرك الاستيراد.</p>
+                <p><strong>التمارين العملية:</strong> يقوم المتدرب بإنشاء ملف PBIX، الاتصال بمجلد (Folder) يحتوي على ملفات المبيعات الشهرية للمشروع المتكامل، ودمجها تلقائياً باستخدام وظيفة Combine Binaries، ثم حفظ الملف بهيكلية قياسية.</p>
+                <p><strong>أخطاء شائعة:</strong> الاندفاع نحو رسم المخططات البيانية بمجرد تحميل البيانات دون فحص جودتها أو فهم هيكليتها، واختيار DirectQuery كوضع افتراضي.</p>
+                <p><strong>نقاط حديث المدرب:</strong> يجب التأكيد بصرامة على أن وضع الاستيراد (Import Mode) هو الخيار المفضل والمهيمن في 90% من سيناريوهات العمل.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الأولى</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s1_1"><span>شرح معمارية Power BI (الخدمات والتراخيص) ومحرك VertiPaq.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s1_2"><span>تنفيذ العرض الحي (Live Demo) للفرق بين Import و DirectQuery على 10 مليون صف.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s1_3"><span>توجيه المتدربين لدمج ملفات المبيعات باستخدام Combine Binaries (Folder).</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 2: سحر Power Query وفلسفة التنظيف المتقدم</h3>
+                <p><strong>أهداف التعلم:</strong> إتقان التنقل في واجهة Power Query، تطبيق مبدأ قاعدة روش لدفع التحويلات نحو المصدر، وفهم كيفية معالجة البيانات المشوهة والمحورية.</p>
+                <p><strong>محتوى الجلسة:</strong> التركيز على تقنيات تحويل البيانات المتقدمة. إزالة الصفوف الفارغة، استخدام Split Column by Delimiter لفصل الأسماء المعقدة. دراسة متعمقة لكيفية تحويل البيانات المحورية (Unpivot Data) لتصحيح هياكل الجداول، ومفاهيم الدمج (Merge) والإلحاق (Append) للبيانات.</p>
+                <p><strong>أمثلة دقيقة:</strong> ملف أهداف المبيعات السنوية يحتوي على أسماء المنتجات في صف، والأشهر (يناير إلى ديسمبر) كأعمدة عرضية. يتم استخدام وظيفة Unpivot Other Columns لتحويلها إلى ثلاثة أعمدة قياسية: (المنتج، الشهر، القيمة المستهدفة).</p>
+                <p><strong>أفكار العرض الحي:</strong> عرض كيف يؤثر ترتيب الخطوات في Power Query على مفهوم "طي الاستعلام" (Query Folding). يظهر المدرب كيف أن وضع خطوة تغيير نوع البيانات قبل خطوة الفلترة قد يكسر عملية الطي.</p>
+                <p><strong>التمارين العملية:</strong> توحيد أسماء المدن المكتوبة بخطأ إملائي في جدول العملاء باستخدام دالة الدمج مع جدول مرجعي (Mapping Table).</p>
+                <p><strong>نقاط حديث المدرب:</strong> يُلزم المدرب بإيصال رسالة واضحة: البيانات المكدسة عرضياً (Pivoted) تقتل ضغط البيانات وتعقد كتابة لغة DAX. الحل الدائم هو فك المحورية (Unpivot).</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الثانية</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s2_1"><span>شرح عملي لفك محورية ملف الأهداف (Unpivot Other Columns).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s2_2"><span>شرح مفهوم "طي الاستعلام" (Query Folding) وأهمية ترتيب الخطوات.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s2_3"><span>تنفيذ دمج (Merge) لإصلاح أسماء المدن باستخدام Mapping Table.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 3: النمذجة المتقدمة وبناء معمارية نموذج النجمة</h3>
+                <p><strong>أهداف التعلم:</strong> استيعاب نظرية النمذجة البعدية، بناء نموذج النجمة، القضاء على الجداول الضخمة، وبناء جداول التقويم الديناميكية.</p>
+                <p><strong>محتوى الجلسة:</strong> التفريق الجذري بين جداول الحقائق وجداول الأبعاد. شرح مخاطر ميزة Auto Date/Time وكيفية تعطيلها. استخدام كود M لبناء جدول تواريخ مركزي.</p>
+                <p><strong>أمثلة دقيقة:</strong> فصل جدول "الطلبات" الضخم إلى جدول حقائق وجداول أبعاد للعملاء والمنتجات.</p>
+                <p><strong>أفكار العرض الحي:</strong> يعرض المدرب ملف PBIX بحجم 50 ميجابايت. يقوم بتعطيل ميزة (Auto Date/Time)، فينخفض حجم الملف فوراً إلى 42 ميجابايت.</p>
+                <p><strong>التمارين العملية:</strong> بناء جدول Calendar باستخدام لغة M وإضافة أعمدة السنة المالية وربطه بجدول المبيعات.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الثالثة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s3_1"><span>العرض الحي لتعطيل ميزة Auto Date/Time وبيان الانخفاض في حجم الملف.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s3_2"><span>فصل الجداول المسطحة إلى نموذج نجمي (Star Schema).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s3_3"><span>بناء جدول التقويم (Calendar Table) باستخدام كود M وربطه.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 4: ديناميكية العلاقات وفك تعقيدات السياق</h3>
+                <p><strong>أهداف التعلم:</strong> التحكم الدقيق في اتجاه الفلترة، إدارة العلاقات متعددة إلى متعددة، والمخاطر التشغيلية للعلاقات ثنائية الاتجاه.</p>
+                <p><strong>محتوى الجلسة:</strong> سلوك انتقال الفلاتر من الجانب (1) إلى (*). استخدام دالة USERELATIONSHIP لتفعيل العلاقات الخاملة. دراسة تأثير الفلترة ثنائية الاتجاه.</p>
+                <p><strong>أمثلة دقيقة:</strong> علاقتان بين التقويم والمبيعات: "تاريخ الطلب" (نشطة) و"تاريخ الشحن" (خاملة).</p>
+                <p><strong>أفكار العرض الحي:</strong> توضيح سيناريو اختفاء البيانات (Vanishing Data) عند تطبيق فلتر ثنائي الاتجاه بين المبيعات والمنتجات.</p>
+                <p><strong>التمارين العملية:</strong> إصلاح علاقة دائرية واستخدام الدالة CROSSFILTER برمجياً.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الرابعة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s4_1"><span>شرح تدفق الفلاتر من (1) إلى (*).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s4_2"><span>تنفيذ العرض الحي لظاهرة اختفاء البيانات بسبب العلاقات ثنائية الاتجاه.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s4_3"><span>تطبيق دالة USERELATIONSHIP لجدول تواريخ الشحن.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 5: الأسس الصلبة لمحرك DAX وسياق التقييم</h3>
+                <p><strong>أهداف التعلم:</strong> فهم قواعد DAX، التمييز بين الأعمدة المحسوبة والمقاييس، واستيعاب مفهوم سياق الصف (Row Context) وسياق الفلتر (Filter Context).</p>
+                <p><strong>محتوى الجلسة:</strong> الأعمدة المحسوبة تحتل مساحة وتُعالج عند التحديث، بينما المقاييس تُحسب عند الطلب. تدريس دوال التجميع والدوال المنطقية.</p>
+                <p><strong>أمثلة دقيقة:</strong> بناء مقياس آمن لهامش الربح: <code>Profit Margin = DIVIDE(SUM(Sales[Profit]), SUM(Sales), 0)</code></p>
+                <p><strong>أفكار العرض الحي:</strong> عرض مرئي لمفهوم سياق الفلتر (خلية التقاطع في مصفوفة مبيعات أوروبا 2024).</p>
+                <p><strong>التمارين العملية:</strong> تحويل 5 متطلبات إلى مقاييس (Measures)، وتصنيف العملاء باستخدام SWITCH.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الخامسة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s5_1"><span>شرح معماري كامل لـ Row Context مقابل Filter Context.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s5_2"><span>بناء مقياس DIVIDE آمن لحساب الهوامش.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s5_3"><span>استخدام الدالة SWITCH لتصنيف أحجام العملاء.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 6: التحكم المطلق بواسطة الدالة CALCULATE</h3>
+                <p><strong>أهداف التعلم:</strong> إتقان CALCULATE، تعديل سياق التقييم، وتطبيق فلاتر ALL و FILTER.</p>
+                <p><strong>محتوى الجلسة:</strong> تفكيك CALCULATE כأداة لتجاهل أو مسح فلاتر. استخدام ALL لمسح السياق.</p>
+                <p><strong>أمثلة دقيقة:</strong> <code>% of Total = DIVIDE(Total Sales, CALCULATE(Total Sales, ALL(Products)))</code></p>
+                <p><strong>أفكار العرض الحي:</strong> إظهار "التحول السياقي" (Context Transition) داخل عمود محسوب.</p>
+                <p><strong>التمارين العملية:</strong> مقياس لمبيعات "عالية التكلفة" في "الإلكترونيات" عبر شروط فلاتر متعددة.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة السادسة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s6_1"><span>شرح كيفية تعديل CALCULATE لسياق الفلتر.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s6_2"><span>تطبيق دالة ALL لحساب نسبة المساهمة من الإجمالي (% of Total).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s6_3"><span>التحذير من استخدام FILTER على جداول ضخمة بأكملها.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 7: ذكاء الوقت والدوال التكرارية (Iterators)</h3>
+                <p><strong>أهداف التعلم:</strong> المقارنات الزمنية، التخلص من أخطاء الإجماليات، حسابات سياق الصف عبر دوال (X).</p>
+                <p><strong>محتوى الجلسة:</strong> دوال نمو الأعمال (TOTALYTD, SAMEPERIODLASTYEAR). إدخال الدوال التكرارية (SUMX).</p>
+                <p><strong>أمثلة دقيقة:</strong> <code>Total Cost = SUMX(Sales, Sales[Quantity] * Sales[Unit Cost])</code></p>
+                <p><strong>أفكار العرض الحي:</strong> إثبات الخطأ المسمى بالإجماليات غير المنطقية (Nonsense Totals) وحله بـ SUMX.</p>
+                <p><strong>التمارين العملية:</strong> مقاييس النمو السنوي، ومقياس RANKX لأفضل 10 عملاء.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة السابعة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s7_1"><span>عرض مشكلة الإجماليات الخاطئة في الجداول وحلها باستخدام SUMX.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s7_2"><span>بناء مقاييس ذكاء الوقت (SAMEPERIODLASTYEAR) المرتبطة بجدول Calendar.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s7_3"><span>تطبيق RANKX لتحديد أفضل 10 عملاء/منتجات.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 8: فن السرد القصصي والتصميم المعماري للوحات القيادة</h3>
+                <p><strong>محتوى الجلسة:</strong> التخلي عن المخططات الدائرية للبيانات المتعددة. الاعتماد على المخططات الشريطية والانسيابية. استخدام البطاقات الجديدة المدمجة (New Card Visual).</p>
+                <p><strong>أفكار العرض الحي:</strong> تمرين "التبسيط الجذري" (Radical Simplification) للوحة قيادة مزدحمة.</p>
+                <p><strong>التمارين العملية:</strong> هيكلة صفحة "الملخص التنفيذي" بـ 5 رسوم تفاعلية فقط (Decomposition Tree).</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة الثامنة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s8_1"><span>تنفيذ تمرين التبسيط الجذري أمام المتدربين.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s8_2"><span>بناء New Card Visual بمؤشرات التباين والألوان.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s8_3"><span>استخدام Decomposition Tree لتحليل تراجع المبيعات.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 9: الميزة التنافسية: تحسين الأداء والمؤشرات البصرية المخصصة</h3>
+                <p><strong>محتوى الجلسة:</strong> استخدام Performance Analyzer لقياس الفروق الزمنية. التعرف على مفهوم (DAX Fusion). استيراد مرئيات AppSource.</p>
+                <p><strong>أفكار العرض الحي:</strong> تحديد مشكلة الأداء في ملف بـ 25 شكل نصي عبر محلل الأداء، وتجميع المقاييس (DAX Fusion).</p>
+                <p><strong>التمارين العملية:</strong> استخدام Zebra BI Tables لمعايير IBCS، و Inforiver Super Filter.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة التاسعة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s9_1"><span>تشغيل Performance Analyzer وشرح كيفية تقليل وقت الاستعلام.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s9_2"><span>شرح مفهوم DAX Fusion.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s9_3"><span>إضافة وتطبيق مرئيات Zebra BI و Inforiver.</span></label>
+                </div>
+
+                <h3 style="color: var(--primary); margin-top: 40px;">الجلسة 10: الجاهزية للسوق، الأمان المعماري، واستراتيجيات التوظيف</h3>
+                <p><strong>محتوى الجلسة:</strong> الأمان على مستوى الصف (RLS). آليات النشر، مساحات العمل والتطبيقات. استراتيجيات التوثيق وبناء Portfolio.</p>
+                <p><strong>أفكار العرض الحي:</strong> استعراض كيفية بناء ملف تفاعلي على NovyPro أو Maven Analytics.</p>
+                <p><strong>التمارين العملية:</strong> بناء RLS Roles، ومحاكاة مقابلة عمل فنية بطريقة STAR.</p>
+                <div class="checklist-container">
+                    <h4>🎯 مهام الجلسة العاشرة</h4>
+                    <label class="check-item"><input type="checkbox" id="chk_s10_1"><span>تطبيق Role Level Security (RLS) واختباره.</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s10_2"><span>نشر التقرير وشرح مساحات العمل (Workspaces) والتطبيقات (Apps).</span></label>
+                    <label class="check-item"><input type="checkbox" id="chk_s10_3"><span>محاكاة المقابلة التقنية وربط المشاريع بمنصات الـ Portfolio.</span></label>
+                </div>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة الخامسة: الميزة التنافسية (Advanced Edge)</h2>
+                <p>ما يميز هذا المنهج ويجعله أداة لتخريج محللين من الطراز الرفيع هو دمجه لمفاهيم متقدمة تغفل عنها 90% من الدورات الأكاديمية:</p>
+                <ul>
+                    <li><strong>طي الاستعلام (Query Folding):</strong> تعليم المتدربين الآلية التي يقوم بها Power Query بترجمة خطوات التنظيف إلى لغة استعلام أصلية (مثل T-SQL) وإرسالها ليتم معالجتها في خادم قاعدة البيانات الأصلية، مما يوفر سرعات معالجة محلية هائلة ويمنع سحب ملايين الصفوف للذاكرة المحلية بشكل عشوائي.</li>
+                    <li><strong>معايير (IBCS) للسرد المالي:</strong> تبني معايير الاتصال التجاري الدولي في التقارير المالية لضمان الفهم الموحد. يتم التدريب على إبراز الفروقات والانحرافات (Variances) عن الموازنة بألوان موحدة (أخضر إيجابي، أحمر سلبي) باستخدام أشرطة ومخططات الشلال المدمجة، مما يختصر وقت قراءة الميزانية من ساعات إلى ثوانٍ.</li>
+                </ul>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة السادسة: استراتيجية الجاهزية للسوق (Market Readiness)</h2>
+                <ul>
+                    <li><strong>استراتيجية بناء المعرض (Portfolio Strategy):</strong> لم يعد السيرة الذاتية الورقية كافياً. يوجه البرنامج المتدربين لإنشاء واجهة عرض تفاعلية على منصات مثل Maven Analytics و GitHub. يجب أن يتضمن كل مشروع توثيقاً منهجياً يوضح التحديات التي تمت مواجهتها في مرحلة التنظيف (Data Cleaning)، مبررات اختيار المؤشرات، وكيف تم تحويل البيانات إلى توصيات استراتيجية.</li>
+                    <li><strong>التحضير للمقابلات وتوقعات الشركات:</strong> التركيز على إعداد المتدرب للإجابة على الأسئلة المعمارية (Architectural Questions)، مثل التفريق بين وضع الاستيراد و DirectQuery، وشرح تأثير العلاقات ثنائية الاتجاه، وما هي دالة CALCULATE وكيفية معالجة الأداء. تتوقع الشركات من المحلل الجديد تقديم رؤى قادرة على تقليل النفقات وزيادة الإيرادات، وليس فقط بناء مخططات جميلة.</li>
+                </ul>
+            </div>
+
+            <div class="station">
+                <h2>المرحلة السابعة: استراتيجية إيصال التدريب (Delivery Strategy)</h2>
+                <p>لضمان التفاعل وتقليل الحمل المعرفي (Cognitive Overload) عبر جلسات تستمر لساعتين، يتم تقسيم وقت كل جلسة (120 دقيقة) وفق القاعدة الذهبية للتدريب التقني (25-50-25):</p>
+                <ul>
+                    <li><strong>25% نظرية هندسية ومفاهيم معمقة (30 دقيقة):</strong> شرح ميكانيكية المحرك، سياق التقييم، وبناء المعرفة المجردة قبل لمس الفأرة.</li>
+                    <li><strong>50% تطبيق عملي موجه وعروض حية (60 دقيقة):</strong> انتقال المدرب لتطبيق النظريات مباشرة على بيانات المشروع المتكامل، وحل السيناريوهات المعقدة أمام المتدربين.</li>
+                    <li><strong>25% تحديات ومراجعة مستقلة (30 دقيقة):</strong> تكليف المتدربين بمهام محددة وتحديات مصغرة تتطلب حلاً مستقلاً لترسيخ المعلومة وتصحيح الأخطاء التشغيلية مباشرة في القاعة الافتراضية.</li>
+                </ul>
+            </div>
+
+            <div class="station" style="border-color: var(--primary);">
+                <h2>الإضافات المعرفية والأدوات الأساسية للمنهج</h2>
+
+                <h3>1. قائمة مرتبة هرمياً لأهم مقاييس DAX التجارية المطلوبة</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المقياس الحسابي</th>
+                                <th>دوال DAX الأساسية</th>
+                                <th>آلية العمل وسيناريو الاستخدام التجاري</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Year-over-Year (YoY) Growth</td>
+                                <td>CALCULATE, SAMEPERIODLASTYEAR, DIVIDE</td>
+                                <td>يقوم بتعديل سياق التقييم لإرجاع مبيعات نفس الفترة من العام السابق. ضروري لقياس نسب نمو الأعمال وانحرافات الإيرادات.</td>
+                            </tr>
+                            <tr>
+                                <td>Cumulative / Running Total</td>
+                                <td>CALCULATE, FILTER, ALL, MAX</td>
+                                <td>حساب مجاميع المبيعات التراكمية عبر فترات زمنية متصلة لمراقبة مدى تحقيق الحصص المستهدفة (Quotas) للمبيعات.</td>
+                            </tr>
+                            <tr>
+                                <td>Top N Performers</td>
+                                <td>RANKX, IF, ISINSCOPE</td>
+                                <td>توليد ترتيب ديناميكي للمنتجات أو العملاء وتحديد أفضل 5 مؤدين في الشركة بناءً على سياق الفلتر لتوجيه الحملات التسويقية.</td>
+                            </tr>
+                            <tr>
+                                <td>Percentage of Total</td>
+                                <td>DIVIDE, CALCULATE, ALL</td>
+                                <td>قياس مساهمة قسم مبيعات معين في إجمالي المبيعات، حيث تزيل الدالة ALL تأثير الفلاتر لتوليد القيمة الإجمالية كمقام ثابت.</td>
+                            </tr>
+                            <tr>
+                                <td>Dynamic Row Aggregation</td>
+                                <td>SUMX, AVERAGEX</td>
+                                <td>فرض سياق صف مؤقت لحساب مجاميع دقيقة، مثل حساب إجمالي التكلفة بضرب السعر بالكمية لكل صف قبل التجميع الإجمالي.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>2. أهم تحويلات ودوال Power Query (لغة M) في سوق العمل</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>وظيفة التحويل (Transformation)</th>
+                                <th>الوظيفة الاستراتيجية والأثر</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unpivot Other Columns</td>
+                                <td>التحويل الأهم على الإطلاق. يعالج البيانات المكدسة أفقياً (كالأشهر كأعمدة) ويحولها لصفوف، مما يحسن الضغط ويفعل دوال DAX الزمنية.</td>
+                            </tr>
+                            <tr>
+                                <td>Merge Queries (Joins)</td>
+                                <td>دمج الجداول استناداً إلى مفاتيح مشتركة لجلب بيانات وصفية لجدول آخر لتقليل التعقيد قبل التحميل للنموذج.</td>
+                            </tr>
+                            <tr>
+                                <td>Split Column by Delimiter</td>
+                                <td>تكسير الحقول النصية المعقدة (مثل فصل المعرف عن الاسم) لتسهيل تصنيف البيانات وفلترتها لاحقاً.</td>
+                            </tr>
+                            <tr>
+                                <td>Conditional Columns</td>
+                                <td>بناء أعمدة تعتمد على قواعد If/Then لتوحيد القيم، تصحيح الأخطاء، وإنشاء مجاميع وفئات مخصصة لتحليل الشرائح.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3. الأدوات الاحترافية الأساسية المساندة للمحلل</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الأداة المعاونة</th>
+                                <th>الاستخدام التشغيلي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Performance Analyzer</td>
+                                <td>أداة مدمجة أساسية لقياس الزمن الدقيق الذي يستغرقه كل مؤشر بصري في الاستعلام والعرض، ولاكتشاف اختناقات DAX.</td>
+                            </tr>
+                            <tr>
+                                <td>DAX Studio</td>
+                                <td>أداة خارجية قوية لتحليل وتحسين أداء استعلامات DAX المعقدة واستخراج إحصائيات استهلاك الذاكرة لمحرك VertiPaq.</td>
+                            </tr>
+                            <tr>
+                                <td>Tabular Editor</td>
+                                <td>أداة متقدمة لإدارة وتعديل نماذج البيانات بسرعة هائلة، وإنشاء مجموعات الحسابات (Calculation Groups) للتحكم المتقدم بالنموذج.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>4. أبرز المؤشرات البصرية المخصصة (Custom Visuals) القياسية</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المؤشر البصري (AppSource)</th>
+                                <th>حالة الاستخدام التجاري (Use Case)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Zebra BI Tables & Charts</td>
+                                <td>تحويل البيانات المالية المعقدة إلى جداول ومخططات مطابقة لمعايير (IBCS) مع رسوم شلالية للتباينات وإمكانيات فرز مرنة للغاية.</td>
+                            </tr>
+                            <tr>
+                                <td>Inforiver Super Filter</td>
+                                <td>مقسم بيانات متطور (Slicer) يدمج خيارات البحث المتقدمة، التقويم، والفلترة الهرمية المعقدة في واجهة واحدة لتسهيل الاستخدام.</td>
+                            </tr>
+                            <tr>
+                                <td>Infographic Designer</td>
+                                <td>أداة مرنة لتصميم المخططات الشريطية والرسوم البيانية باستخدام الصور المخصصة والرموز التوضيحية لتقديم تقارير تسويقية مبدعة.</td>
+                            </tr>
+                            <tr>
+                                <td>Deneb</td>
+                                <td>موجه للمطورين، ويسمح ببناء مخططات بصرية مخصصة ومعقدة بالكامل عبر كتابة شفرات باستخدام لغة البرمجة التعريفية Vega-Lite.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>5. الجدول المرجعي الشامل لمهام المشروع المتكامل (Daily Tasks Summary)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الجلسة</th>
+                                <th>المهمة المنجزة في مشروع (E-Commerce Analytics)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>اليوم 1</td><td>استيراد قواعد البيانات المتعددة للمتجر، ربط الملفات عبر Folders، وتحديد وضع الاتصال (Import) بأمان.</td></tr>
+                            <tr><td>اليوم 2</td><td>إجراء 5 خطوات تنظيف جراحية في Power Query؛ أبرزها فك محورية جدول الميزانيات، وفصل الأسماء.</td></tr>
+                            <tr><td>اليوم 3</td><td>تفكيك الجدول المسطح (Flat File) إلى نموذج نجمي قياسي، وبناء جدول تواريخ مؤسسي صلب وإلغاء الجداول التلقائية.</td></tr>
+                            <tr><td>اليوم 4</td><td>هندسة العلاقات، فرض تدفق فلاتر أحادي الاتجاه لتجنب الغموض، ومعالجة المرتجعات بالعلاقات الخاملة.</td></tr>
+                            <tr><td>اليوم 5</td><td>بناء المقاييس التأسيسية للمشروع (الإيرادات، الكميات، إجمالي التكاليف) وفهم موقعها خارج جداول النموذج.</td></tr>
+                            <tr><td>اليوم 6</td><td>استخدام CALCULATE لتصفية مبيعات المناطق الحيوية ومقارنتها بالإجمالي العام لتحديد حصص السوق.</td></tr>
+                            <tr><td>اليوم 7</td><td>قياس نمو العائدات السنوي باستخدام دوال الزمن، وبناء مقاييس ترتيب المنتجات (Top N) لدعم قسم التسويق.</td></tr>
+                            <tr><td>اليوم 8</td><td>هندسة وبناء واجهة الملخص التنفيذي وتطبيق مبادئ Gestalt لضمان استرشاد عين المستثمر للأرقام الحيوية.</td></tr>
+                            <tr><td>اليوم 9</td><td>تطبيق Zebra BI لإظهار الانحرافات الربحية، وقياس سرعة التقرير وتسريع تحميله عبر Performance Analyzer.</td></tr>
+                            <tr><td>اليوم 10</td><td>حجب رواتب المدراء ومبيعات الأقسام بـ RLS، نشر التقرير على مساحة العمل، وتجهيز دراسة الحالة الخاصة به لمعرض Maven.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="station" style="background: var(--primary); color: var(--bg-dark); border: none;">
+                <h2 style="color: var(--bg-dark); border-color: rgba(0,0,0,0.2);">الخاتمة</h2>
+                <p style="font-weight: bold;">يُشكل هذا التصميم المعماري للمنهج نظاماً تدريبياً شاملاً يتخطى التعليمات الأساسية ليضع المتدربين في قلب التحديات الحقيقية لهندسة وتحليل البيانات. من خلال الالتزام بالصرامة المعمارية، وتجنب الاختصارات الفاشلة مثل النماذج ذات الجدول الواحد أو العلاقات ثنائية الاتجاه العشوائية، سيتمكن المتدربون من اكتساب جاهزية استثنائية تجعلهم يضاهون قدرات محللي ذكاء الأعمال الممارسين في السوق الدولي.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // دالة لحساب وتحديث شريط الإنجاز وتخزين البيانات
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            // استرجاع البيانات المحفوظة
+            const savedState = JSON.parse(localStorage.getItem('pbiCourseChecklist')) || {};
+
+            function updateProgress() {
+                let checkedCount = 0;
+                checkboxes.forEach(chk => {
+                    if (chk.checked) checkedCount++;
+                });
+                
+                const percentage = checkboxes.length > 0 ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
+                progressBar.style.width = percentage + '%';
+                progressText.innerText = 'الإنجاز: ' + percentage + '%';
+            }
+
+            // تطبيق البيانات المحفوظة عند التحميل
+            checkboxes.forEach(chk => {
+                if (savedState[chk.id]) {
+                    chk.checked = true;
+                }
+                
+                // إضافة حدث عند النقر
+                chk.addEventListener('change', (e) => {
+                    savedState[e.target.id] = e.target.checked;
+                    localStorage.setItem('pbiCourseChecklist', JSON.stringify(savedState));
+                    updateProgress();
+                });
+            });
+
+            // التحديث الأولي
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
